@@ -1,5 +1,7 @@
 const STORAGE_KEYS = {
-  token: "orbitnest:token",
+  user: "orbitnest:user",
+  plans: "orbitnest:plans",
+  guestGenerations: "orbitnest:guestGenerations",
 };
 
 const $ = (selector) => document.querySelector(selector);
@@ -18,148 +20,129 @@ const plannerForm = $("#custom-planner-form");
 const plannerOutput = $("#planner-output");
 const savedCount = $("#saved-count");
 const todayFocus = $("#today-focus");
-const blogForm = $("#blog-form");
-const blogOutput = $("#blog-output");
 
 let currentPlan = null;
-let currentUser = null;
-let savedPlans = [];
-let savedPlanners = [];
 
-function getToken() {
-  return localStorage.getItem(STORAGE_KEYS.token);
-}
-
-function setToken(token) {
-  localStorage.setItem(STORAGE_KEYS.token, token);
-}
-
-function escapeHtml(value) {
-  return String(value)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-async function api(path, options = {}) {
-  const token = getToken();
-  const response = await fetch(path, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(options.headers || {}),
-    },
-  });
-  const payload = await response.json();
-  if (!response.ok) {
-    throw new Error(payload.error || "Something went wrong.");
+function getJson(key, fallback) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+  } catch {
+    return fallback;
   }
-  return payload;
 }
 
-function setStatus(message, isError = false) {
-  authStatus.textContent = message;
-  authStatus.style.color = isError ? "#b42318" : "";
+function setJson(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
-function updateDashboard(guestGenerations = null, guestLimit = 3) {
-  guestCounter.textContent = currentUser
-    ? "Signed in: unlimited plans"
-    : guestGenerations === null
-      ? `${guestLimit} free plans`
-      : `Free plans: ${guestGenerations}/${guestLimit}`;
-  savedCount.textContent = `${savedPlans.length} saved itinerary${savedPlans.length === 1 ? "" : "ies"} · ${savedPlanners.length} planner${savedPlanners.length === 1 ? "" : "s"}`;
-  todayFocus.textContent = savedPlans[0] ? `Review ${savedPlans[0].title}` : "Pick one priority";
+function getUser() {
+  return getJson(STORAGE_KEYS.user, null);
+}
+
+function getPlans() {
+  return getJson(STORAGE_KEYS.plans, []);
+}
+
+function getGuestGenerations() {
+  return Number(localStorage.getItem(STORAGE_KEYS.guestGenerations) || 0);
+}
+
+function setGuestGenerations(value) {
+  localStorage.setItem(STORAGE_KEYS.guestGenerations, String(value));
+  updateDashboard();
+}
+
+function updateDashboard() {
+  const user = getUser();
+  const plans = getPlans();
+  const guestCount = getGuestGenerations();
+
+  guestCounter.textContent = user ? "Logged in: unlimited" : `Guest generations: ${guestCount}/3`;
+  savedCount.textContent = `${plans.length} saved plan${plans.length === 1 ? "" : "s"}`;
+  todayFocus.textContent = plans[0] ? `Review ${plans[0].title}` : "Pick one priority";
 
   $$('[data-open-auth]').forEach((button) => {
-    if (button.tagName === "BUTTON") {
-      button.textContent = currentUser ? `Signed in as ${currentUser.email}` : button.dataset.authLabel || button.textContent;
+    if (button.tagName === "BUTTON" && user) {
+      button.textContent = "Account active";
     }
   });
 }
 
-async function loadAccount() {
-  if (!getToken()) {
-    updateDashboard();
-    return;
-  }
+function buildItinerary({ destination, days, budget, interests }) {
+  const interestList = interests
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const dayCount = Math.min(Number(days), 21);
+  const activities = interestList.length ? interestList : ["local food", "culture", "scenic walks"];
 
-  try {
-    const payload = await api("/api/me");
-    currentUser = payload.user;
-    savedPlans = payload.plans || [];
-    savedPlanners = payload.planners || [];
-    updateDashboard();
-  } catch (error) {
-    localStorage.removeItem(STORAGE_KEYS.token);
-    currentUser = null;
-    savedPlans = [];
-    savedPlanners = [];
-    updateDashboard();
-  }
+  return {
+    id: crypto.randomUUID(),
+    title: `${dayCount}-day ${destination} itinerary`,
+    destination,
+    days: Array.from({ length: dayCount }, (_, index) => {
+      const focus = activities[index % activities.length];
+      return {
+        day: index + 1,
+        morning: `Start with a relaxed ${focus} experience near your stay.`,
+        afternoon: `Choose a ${budget.toLowerCase()} lunch, then follow a low-stress route through top neighborhoods.`,
+        evening: `Book a memorable dinner or sunset activity connected to ${focus}.`,
+      };
+    }),
+    budget,
+    interests: activities,
+    createdAt: new Date().toISOString(),
+  };
 }
 
 function renderItinerary(plan) {
-  const safeTitle = escapeHtml(plan.title);
+  const shareUrl = `${window.location.origin}${window.location.pathname}?share=${encodeURIComponent(plan.id)}`;
   itineraryOutput.className = "generated-plan";
   itineraryOutput.innerHTML = `
     <div>
-      <p class="eyebrow">Your itinerary</p>
-      <h3>${safeTitle}</h3>
-      <p>Budget style: ${escapeHtml(plan.budget)}. Interests: ${escapeHtml(plan.interests.join(", "))}.</p>
+      <p class="eyebrow">Generated itinerary</p>
+      <h3>${plan.title}</h3>
+      <p>Budget style: ${plan.budget}. Interests: ${plan.interests.join(", ")}.</p>
     </div>
     ${plan.days
       .map(
         (day) => `
           <article class="day-card">
-            <h4>Day ${escapeHtml(day.day)}</h4>
-            <p><strong>Morning:</strong> ${escapeHtml(day.morning)}</p>
-            <p><strong>Afternoon:</strong> ${escapeHtml(day.afternoon)}</p>
-            <p><strong>Evening:</strong> ${escapeHtml(day.evening)}</p>
+            <h4>Day ${day.day}</h4>
+            <p><strong>Morning:</strong> ${day.morning}</p>
+            <p><strong>Afternoon:</strong> ${day.afternoon}</p>
+            <p><strong>Evening:</strong> ${day.evening}</p>
           </article>
         `,
       )
       .join("")}
     <div class="deal-row" aria-label="Sponsored travel booking links">
-      <a href="${escapeHtml(plan.hotelUrl)}" target="_blank" rel="sponsored noopener">Compare hotels</a>
-      <a href="${escapeHtml(plan.flightUrl)}" target="_blank" rel="sponsored noopener">Find flights</a>
+      <a href="https://www.booking.com/searchresults.html?ss=${encodeURIComponent(plan.destination)}" target="_blank" rel="sponsored noopener">Compare hotels</a>
+      <a href="https://www.skyscanner.com/transport/flights-to/${encodeURIComponent(plan.destination.toLowerCase())}" target="_blank" rel="sponsored noopener">Find flights</a>
     </div>
-    <p class="helper-text">Share link after saving: <a href="${escapeHtml(plan.shareUrl)}" target="_blank" rel="noopener">${escapeHtml(plan.shareUrl)}</a></p>
+    <p class="helper-text">Public share preview: ${shareUrl}</p>
   `;
 }
 
-async function saveCurrentPlan() {
+function saveCurrentPlan() {
   if (!currentPlan) {
     itineraryOutput.textContent = "Generate a plan before saving.";
     return;
   }
 
-  if (!currentUser) {
-    setStatus("Please log in to save this plan. You can try a few plans before signing in, but they are not saved.", true);
+  if (!getUser()) {
+    authStatus.textContent = "Please log in to save this plan. Guests can generate plans, but they are not saved.";
     authModal.showModal();
     return;
   }
 
-  try {
-    const payload = await api("/api/plans", {
-      method: "POST",
-      body: JSON.stringify({ plan: currentPlan }),
-    });
-    currentPlan = payload.plan;
-    savedPlans = payload.plans;
-    renderItinerary(currentPlan);
-    updateDashboard();
-    savePlanButton.textContent = "Saved ✓";
-    setTimeout(() => {
-      savePlanButton.textContent = "Save plan";
-    }, 1800);
-  } catch (error) {
-    setStatus(error.message, true);
-    authModal.showModal();
-  }
+  const plans = getPlans();
+  setJson(STORAGE_KEYS.plans, [currentPlan, ...plans.filter((plan) => plan.id !== currentPlan.id)]);
+  updateDashboard();
+  savePlanButton.textContent = "Saved ✓";
+  setTimeout(() => {
+    savePlanButton.textContent = "Save plan";
+  }, 1800);
 }
 
 navToggle.addEventListener("click", () => {
@@ -168,125 +151,60 @@ navToggle.addEventListener("click", () => {
 });
 
 $$('[data-open-auth]').forEach((button) => {
-  button.dataset.authLabel = button.textContent;
   button.addEventListener("click", () => authModal.showModal());
 });
 
-authForm.addEventListener("submit", async (event) => {
+authForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const formData = new FormData(authForm);
-
-  try {
-    const payload = await api("/api/auth/register-or-login", {
-      method: "POST",
-      body: JSON.stringify({
-        email: formData.get("email"),
-        password: formData.get("password"),
-      }),
-    });
-    setToken(payload.token);
-    currentUser = payload.user;
-    setStatus(`Signed in as ${payload.user.email}. Your future plans will be saved to your account.`);
-    await loadAccount();
-    setTimeout(() => authModal.close(), 900);
-  } catch (error) {
-    setStatus(error.message, true);
-  }
+  const email = formData.get("email");
+  setJson(STORAGE_KEYS.user, { email, joinedAt: new Date().toISOString(), plan: "free" });
+  authStatus.textContent = `Signed in as ${email}. Your future plans can now be saved locally.`;
+  updateDashboard();
+  setTimeout(() => authModal.close(), 900);
 });
 
-itineraryForm.addEventListener("submit", async (event) => {
+itineraryForm.addEventListener("submit", (event) => {
   event.preventDefault();
-  const formData = new FormData(itineraryForm);
-  const submitButton = itineraryForm.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
-  submitButton.textContent = "Generating...";
+  const user = getUser();
+  const guestCount = getGuestGenerations();
 
-  try {
-    const payload = await api("/api/itineraries/generate", {
-      method: "POST",
-      body: JSON.stringify(Object.fromEntries(formData.entries())),
-    });
-    currentPlan = payload.plan;
-    renderItinerary(currentPlan);
-    updateDashboard(payload.guestGenerations, payload.guestLimit);
-  } catch (error) {
-    setStatus(error.message, true);
+  if (!user && guestCount >= 3) {
+    authStatus.textContent = "You used the free guest limit. Log in to keep creating and saving plans.";
     authModal.showModal();
-  } finally {
-    submitButton.disabled = false;
-    submitButton.textContent = "Generate itinerary";
+    return;
+  }
+
+  const formData = new FormData(itineraryForm);
+  currentPlan = buildItinerary(Object.fromEntries(formData.entries()));
+  renderItinerary(currentPlan);
+
+  if (!user) {
+    setGuestGenerations(guestCount + 1);
   }
 });
 
 savePlanButton.addEventListener("click", saveCurrentPlan);
 
-plannerForm.addEventListener("submit", async (event) => {
+plannerForm.addEventListener("submit", (event) => {
   event.preventDefault();
   const formData = new FormData(plannerForm);
-
-  if (!currentUser) {
-    setStatus("Log in to create and save custom planners.", true);
-    authModal.showModal();
-    return;
-  }
-
-  try {
-    const payload = await api("/api/planners", {
-      method: "POST",
-      body: JSON.stringify(Object.fromEntries(formData.entries())),
-    });
-    savedPlanners = payload.planners;
-    plannerOutput.style.placeItems = "start";
-    plannerOutput.style.textAlign = "left";
-    plannerOutput.innerHTML = `
-      <div>
-        <p class="eyebrow">${escapeHtml(payload.planner.plannerType)}</p>
-        <h3>${escapeHtml(payload.planner.goal)}</h3>
-        <ol>
-          ${payload.planner.checklist.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-        </ol>
-      </div>
-    `;
-    updateDashboard();
-  } catch (error) {
-    setStatus(error.message, true);
-    authModal.showModal();
-  }
+  const plannerType = formData.get("plannerType");
+  const goal = formData.get("goal");
+  plannerOutput.style.placeItems = "start";
+  plannerOutput.style.textAlign = "left";
+  plannerOutput.innerHTML = `
+    <div>
+      <p class="eyebrow">${plannerType}</p>
+      <h3>${goal}</h3>
+      <ol>
+        <li>Define the single outcome that would make this plan successful.</li>
+        <li>Break the goal into three milestones with realistic deadlines.</li>
+        <li>Schedule one focused block and one review block this week.</li>
+        <li>Add a reward or reflection prompt so the plan feels sustainable.</li>
+      </ol>
+    </div>
+  `;
 });
 
-
-blogForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const formData = new FormData(blogForm);
-
-  if (!currentUser) {
-    setStatus("Log in to create and save articles.", true);
-    authModal.showModal();
-    return;
-  }
-
-  try {
-    const payload = await api("/api/blog/generate", {
-      method: "POST",
-      body: JSON.stringify(Object.fromEntries(formData.entries())),
-    });
-    blogOutput.style.placeItems = "start";
-    blogOutput.style.textAlign = "left";
-    blogOutput.innerHTML = `
-      <div>
-        <p class="eyebrow">Article preview</p>
-        <h3>${escapeHtml(payload.post.title)}</h3>
-        <p><strong>Short summary:</strong> ${escapeHtml(payload.post.metaDescription)}</p>
-        <ol>
-          ${payload.post.outline.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
-        </ol>
-        <p class="helper-text">Share link: <a href="${escapeHtml(payload.post.publicUrl)}" target="_blank" rel="noopener">${escapeHtml(payload.post.publicUrl)}</a></p>
-      </div>
-    `;
-  } catch (error) {
-    setStatus(error.message, true);
-    authModal.showModal();
-  }
-});
-
-loadAccount();
+updateDashboard();

@@ -591,30 +591,3 @@ select:focus {
     font-size: 3.2rem;
   }
 }
-
-button:disabled {
-  cursor: wait;
-  opacity: 0.72;
-  transform: none;
-}
-
-.shared-page {
-  padding: 72px 0;
-}
-
-.shared-page h1 {
-  max-width: 900px;
-}
-
-.blog-builder {
-  display: grid;
-  grid-template-columns: minmax(280px, 0.9fr) minmax(320px, 1.1fr);
-  gap: 22px;
-  margin-bottom: 22px;
-}
-
-@media (max-width: 860px) {
-  .blog-builder {
-    grid-template-columns: 1fr;
-  }
-}

@@ -23,21 +23,13 @@ const MIME_TYPES = {
 function ensureDatabase() {
   fs.mkdirSync(DATA_DIR, { recursive: true });
   if (!fs.existsSync(DB_FILE)) {
-    writeDatabase({ users: [], sessions: [], plans: [], planners: [], blogPosts: [], guestUsage: {} });
+    writeDatabase({ users: [], sessions: [], plans: [], planners: [], guestUsage: {} });
   }
 }
 
 function readDatabase() {
   ensureDatabase();
-  const database = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
-  return {
-    users: database.users || [],
-    sessions: database.sessions || [],
-    plans: database.plans || [],
-    planners: database.planners || [],
-    blogPosts: database.blogPosts || [],
-    guestUsage: database.guestUsage || {},
-  };
+  return JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
 }
 
 function writeDatabase(database) {
@@ -184,45 +176,6 @@ function buildPlanner({ plannerType, goal }) {
   };
 }
 
-function slugify(value) {
-  const slug = String(value)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 80);
-  return slug || randomId("post");
-}
-
-function buildBlogPost({ topic, audience, keyword }) {
-  const cleanTopic = sanitizeText(topic, "planning a stress-free trip");
-  const cleanAudience = sanitizeText(audience, "busy travelers");
-  const cleanKeyword = sanitizeText(keyword, cleanTopic.toLowerCase());
-  const title = `How to ${cleanTopic} without overwhelm`;
-  const outline = [
-    `Open with the question travelers are most likely asking about “${cleanKeyword}.”`,
-    `Show ${cleanAudience} a simple step-by-step planning workflow they can finish in one sitting.`,
-    "Add an example itinerary, planner checklist, or life dashboard habit that links back to OrbitNest tools.",
-    "Close with a clear call to action to generate a personalized plan and compare relevant travel deals.",
-  ];
-
-  return {
-    id: randomId("blog"),
-    slug: `${slugify(title)}-${crypto.randomBytes(3).toString("hex")}`,
-    title,
-    topic: cleanTopic,
-    audience: cleanAudience,
-    keyword: cleanKeyword,
-    metaDescription: `A practical guide for ${cleanAudience} who want ${cleanKeyword} help, with planning steps, itinerary ideas, and OrbitNest tools.`,
-    outline,
-    draft: [
-      `This article helps ${cleanAudience} understand ${cleanKeyword} with simple steps they can use right away.`,
-      `Use the first section to explain the problem, then introduce a simple framework: choose the goal, define constraints, map the days or tasks, and save the plan.`,
-      "Before sharing, add personal examples, useful photos, helpful links, and any needed travel deal disclosures.",
-    ],
-    createdAt: new Date().toISOString(),
-  };
-}
-
 function planForClient(plan) {
   return {
     ...plan,
@@ -230,38 +183,6 @@ function planForClient(plan) {
     hotelUrl: `https://www.booking.com/searchresults.html?ss=${encodeURIComponent(plan.destination)}`,
     flightUrl: `https://www.skyscanner.com/transport/flights-to/${encodeURIComponent(plan.destination.toLowerCase())}`,
   };
-}
-
-function publicBlogHtml(post) {
-  const title = escapeHtml(post.title);
-  const outline = post.outline.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
-  const paragraphs = post.draft.map((item) => `<p>${escapeHtml(item)}</p>`).join("");
-
-  return `<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>${title} | OrbitNest Blog</title>
-  <meta name="description" content="${escapeHtml(post.metaDescription)}" />
-  <link rel="stylesheet" href="/styles.css" />
-</head>
-<body>
-  <main class="section-shell shared-page">
-    <p class="eyebrow">OrbitNest article</p>
-    <h1>${title}</h1>
-    <p class="hero-text">Topic: ${escapeHtml(post.keyword)} · For: ${escapeHtml(post.audience)}</p>
-    <article class="day-card">
-      <h2>Suggested outline</h2>
-      <ol>${outline}</ol>
-      <h2>Starter article</h2>
-      ${paragraphs}
-      <p class="helper-text">Review, fact-check, and personalize this article before sharing it publicly.</p>
-    </article>
-    <p><a class="primary-button" href="/#blog">Generate another blog idea</a></p>
-  </main>
-</body>
-</html>`;
 }
 
 function publicPlanHtml(plan) {
@@ -394,7 +315,7 @@ async function handleApi(request, response, pathname) {
     if (!currentUser) {
       const used = database.guestUsage[guestId] || 0;
       if (used >= GUEST_LIMIT) {
-        sendJson(response, 403, { error: "You used your free plan limit. Log in to keep creating and saving plans." });
+        sendJson(response, 403, { error: "You used the free guest limit. Log in to keep creating and saving plans." });
         return;
       }
       database.guestUsage[guestId] = used + 1;
@@ -447,19 +368,6 @@ async function handleApi(request, response, pathname) {
     return;
   }
 
-  if (request.method === "POST" && pathname === "/api/blog/generate") {
-    if (!currentUser) {
-      sendJson(response, 401, { error: "Log in to create and save articles." });
-      return;
-    }
-    const body = await readBody(request);
-    const post = { ...buildBlogPost(body), userId: currentUser.id };
-    database.blogPosts = [post, ...database.blogPosts];
-    writeDatabase(database);
-    sendJson(response, 200, { post: { ...post, publicUrl: `${PUBLIC_BASE_URL}/blog/${post.slug}` } });
-    return;
-  }
-
   sendJson(response, 404, { error: "API route not found." });
 }
 
@@ -472,18 +380,6 @@ async function handleRequest(request, response) {
       return;
     }
 
-
-    if (request.method === "GET" && url.pathname.startsWith("/blog/")) {
-      const slug = url.pathname.split("/").pop();
-      const database = readDatabase();
-      const post = database.blogPosts.find((item) => item.slug === slug);
-      if (!post) {
-        sendHtml(response, 404, "<h1>Article not found</h1><p>This article may not be ready yet.</p>");
-        return;
-      }
-      sendHtml(response, 200, publicBlogHtml(post));
-      return;
-    }
     if (request.method === "GET" && url.pathname.startsWith("/share/")) {
       const publicId = url.pathname.split("/").pop();
       const database = readDatabase();

@@ -17,7 +17,7 @@
     <meta property="og:title" content="OrbitNest | Plan trips, projects, routines, and life in one place" />
     <meta
       property="og:description"
-      content="A simple planning website for instant itineraries, custom planners, shared plans, and premium organization features."
+      content="A user-friendly planning website for instant itineraries, custom planners, public sharing, and premium organization features."
     />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://example.com/" />
@@ -36,7 +36,7 @@
         "name": "OrbitNest",
         "applicationCategory": "TravelApplication",
         "operatingSystem": "Web",
-        "description": "Freemium website for travel itineraries, custom planners, shared plans, and life organization.",
+        "description": "Freemium website for travel itineraries, custom planners, public sharing, and life organization.",
         "offers": [
           { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" },
           { "@type": "Offer", "name": "Premium", "price": "9", "priceCurrency": "USD" }
@@ -70,17 +70,17 @@
           <p class="eyebrow">Travel planning + everyday organization</p>
           <h1>Create itineraries, custom planners, and a calmer life in minutes.</h1>
           <p class="hero-text">
-            Plan trips, organize your week, and keep important ideas in one calm place. Create a few plans free,
-            then sign in to save everything and come back anytime.
+            OrbitNest gives guests a few instant itinerary generations, then unlocks saved plans, public sharing,
+            premium templates, hotel and flight recommendations, and life dashboards for signed-in members.
           </p>
           <div class="hero-actions">
             <a class="primary-button" href="#workspace">Generate my first plan</a>
             <a class="secondary-button" href="#revenue">See revenue model</a>
           </div>
           <div class="trust-row" aria-label="Product highlights">
-            <span>✓ Easy trip planning</span>
-            <span>✓ Save your plans</span>
-            <span>✓ Helpful travel deals</span>
+            <span>✓ SEO-ready landing pages</span>
+            <span>✓ Guest mode</span>
+            <span>✓ Affiliate-ready</span>
           </div>
         </div>
         <div class="hero-card" aria-label="Sample itinerary preview">
@@ -97,7 +97,7 @@
           </div>
           <ul class="timeline">
             <li><strong>Day 1:</strong> Arrive, boutique hotel check-in, sunset food tour.</li>
-            <li><strong>Day 2:</strong> Museum route, café stops, and hotel ideas.</li>
+            <li><strong>Day 2:</strong> Museum route, café stops, affiliate hotel upgrades.</li>
             <li><strong>Day 3:</strong> Train to Lyon, shared public itinerary link.</li>
           </ul>
           <div class="affiliate-strip">
@@ -111,7 +111,7 @@
         <article id="travel" class="feature-card">
           <span class="icon">🧭</span>
           <h2>Travel itineraries</h2>
-          <p>Create day-by-day trip plans based on your budget, pace, and favorite activities.</p>
+          <p>Generate multi-day trip plans with budgets, pace, interests, daily routes, and sponsored booking links.</p>
         </article>
         <article id="planners" class="feature-card">
           <span class="icon">🗂️</span>
@@ -127,11 +127,11 @@
 
       <section class="workspace section-shell" id="workspace">
         <div class="section-heading">
-          <p class="eyebrow">Start planning</p>
+          <p class="eyebrow">Interactive prototype</p>
           <h2>Start free. Log in to save.</h2>
           <p>
-            Try a few plans for free. Sign in with email and password when you want to save your trips,
-            planners, and ideas.
+            Guests can generate a limited number of itineraries. Signing in with email/password in this prototype stores
+            plans locally and unlocks saved dashboards.
           </p>
         </div>
 
@@ -139,7 +139,7 @@
           <form class="planner-panel" id="itinerary-form">
             <div class="panel-title">
               <h3>Trip itinerary generator</h3>
-              <span id="guest-counter" class="pill">Free plans: 0/3</span>
+              <span id="guest-counter" class="pill">Guest generations: 0/3</span>
             </div>
             <label>
               Destination
@@ -164,7 +164,7 @@
               <input name="interests" type="text" placeholder="food, beaches, museums, hiking" required />
             </label>
             <button class="primary-button full" type="submit">Generate itinerary</button>
-            <p class="helper-text">Upgrade later for PDF exports, calendar sync, and more travel deal options.</p>
+            <p class="helper-text">Premium members can export PDFs, sync calendars, and compare live booking prices.</p>
           </form>
 
           <section class="output-panel" aria-live="polite">
@@ -218,20 +218,20 @@
       <section id="revenue" class="revenue section-shell">
         <div class="section-heading">
           <p class="eyebrow">Automatic revenue model</p>
-          <h2>Free planning, helpful deals, and optional upgrades.</h2>
+          <h2>Freemium subscriptions + affiliate commissions.</h2>
         </div>
         <div class="revenue-grid">
           <article>
             <h3>Free acquisition</h3>
-            <p>Visitors can try three plans for free before creating an account.</p>
+            <p>Guests get three unsaved itinerary generations, SEO blog content, and public shared plans for discovery.</p>
           </article>
           <article>
             <h3>Affiliate earnings</h3>
-            <p>Travel deal links can recommend hotels, flights, tours, insurance, and helpful gear.</p>
+            <p>Hotel, flight, tour, insurance, and luggage links are marked sponsored and placed naturally in itineraries.</p>
           </article>
           <article>
             <h3>Premium upgrades</h3>
-            <p>Paid members can save more plans, export PDFs, sync calendars, collaborate, and use premium templates.</p>
+            <p>Paid users save unlimited plans, export PDFs, sync calendars, collaborate, and access premium templates.</p>
           </article>
         </div>
       </section>
@@ -241,7 +241,7 @@
           <p class="eyebrow">Free</p>
           <h2>$0</h2>
           <ul>
-            <li>3 free itinerary generations</li>
+            <li>3 guest itinerary generations</li>
             <li>Basic planner templates</li>
             <li>Affiliate deal recommendations</li>
           </ul>
@@ -260,53 +260,24 @@
 
       <section id="blog" class="blog section-shell">
         <div class="section-heading">
-          <p class="eyebrow">Travel planning guides</p>
-          <h2>Helpful articles for travelers and planners.</h2>
-          <p>
-            Create travel articles, planning guides, and shareable tips that help visitors
-            feel confident before building their own itinerary.
-          </p>
-        </div>
-        <div class="blog-builder">
-          <form class="planner-panel" id="blog-form">
-            <div class="panel-title">
-              <h3>Article idea generator</h3>
-              <span class="pill premium">Blog</span>
-            </div>
-            <label>
-              Topic
-              <input name="topic" type="text" placeholder="plan a 5-day Tokyo itinerary" required />
-            </label>
-            <div class="two-column">
-              <label>
-                Audience
-                <input name="audience" type="text" placeholder="first-time travelers" required />
-              </label>
-              <label>
-                Main topic phrase
-                <input name="keyword" type="text" placeholder="Tokyo itinerary planner" required />
-              </label>
-            </div>
-            <button class="secondary-button full" type="submit">Create article</button>
-            <p class="helper-text">Saved articles can be reviewed and polished before sharing.</p>
-          </form>
-          <div id="blog-output" class="tool-output">Your article plan and starter text will appear here.</div>
+          <p class="eyebrow">SEO content engine</p>
+          <h2>Blog topics built for Google discovery.</h2>
         </div>
         <div class="blog-grid">
           <article>
             <p class="blog-tag">Travel</p>
             <h3>How to plan a 5-day Tokyo itinerary without overwhelm</h3>
-            <p>Helps travelers plan Tokyo days without feeling overwhelmed.</p>
+            <p>Targets high-intent trip planner searches and links into the itinerary generator.</p>
           </article>
           <article>
             <p class="blog-tag">Productivity</p>
             <h3>The weekly reset checklist for busy travelers</h3>
-            <p>Shows busy travelers how to reset their week and stay organized.</p>
+            <p>Bridges travel users into recurring planner and life organization features.</p>
           </article>
           <article>
             <p class="blog-tag">Sharing</p>
             <h3>Public itinerary examples you can copy and customize</h3>
-            <p>Gives visitors examples they can copy, personalize, and share.</p>
+            <p>Creates indexable shared pages that can rank for destination-specific planning terms.</p>
           </article>
         </div>
       </section>
@@ -330,7 +301,7 @@
         <button class="close-button" value="cancel" aria-label="Close login dialog">×</button>
         <p class="eyebrow">Account access</p>
         <h2 id="auth-title">Log in or create your free account</h2>
-        <p>Use email and password to save generated itineraries and planners.</p>
+        <p>Use email/password to save generated itineraries and planners on this device.</p>
         <label>
           Email
           <input name="email" type="email" placeholder="you@example.com" required />
@@ -340,7 +311,7 @@
           <input name="password" type="password" minlength="6" placeholder="At least 6 characters" required />
         </label>
         <button class="primary-button full" type="submit">Continue</button>
-        <p class="helper-text" id="auth-status">Create an account to save your plans and come back anytime.</p>
+        <p class="helper-text" id="auth-status">Prototype authentication uses local browser storage.</p>
       </form>
     </dialog>
 
