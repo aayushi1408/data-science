@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OrbitNest | AI Travel Itineraries, Custom Planners & Life Organization</title>
+    <meta
+      name="description"
+      content="Create beautiful travel itineraries, custom planners, and life organization boards with a full-stack Node app. Start free, save your plans with an account, and discover curated hotel and flight deals."
+    />
+    <meta
+      name="keywords"
+      content="travel itinerary planner, trip planner, custom planner, life organization, vacation planner, daily planner, freemium planner"
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://example.com/" />
+    <meta property="og:title" content="OrbitNest | Plan trips, projects, routines, and life in one place" />
+    <meta
+      property="og:description"
+      content="A full-stack planning website for instant itineraries, custom planners, public sharing, account storage, and premium organization features."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://example.com/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "OrbitNest",
+        "applicationCategory": "TravelApplication",
+        "operatingSystem": "Web",
+        "description": "Full-stack freemium website for travel itineraries, custom planners, public sharing, account storage, and life organization.",
+        "offers": [
+          { "@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD" },
+          { "@type": "Offer", "name": "Premium", "price": "9", "priceCurrency": "USD" }
+        ]
+      }
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="Primary navigation">
+        <a class="brand" href="#home" aria-label="OrbitNest home">
+          <span class="brand-mark">✦</span>
+          <span>OrbitNest</span>
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu">Menu</button>
+        <div class="nav-menu" id="nav-menu">
+          <a href="#travel">Travel</a>
+          <a href="#planners">Planners</a>
+          <a href="#life">Life Hub</a>
+          <a href="#blog">Blog</a>
+          <a href="#pricing">Pricing</a>
+          <button class="ghost-button" type="button" data-open-auth>Log in</button>
+          <a class="primary-button small" href="#workspace">Start free</a>
+        </div>
+      </nav>
+    </header>
+
+    <main id="home">
+      <section class="hero section-shell">
+        <div class="hero-copy">
+          <p class="eyebrow">Travel planning + everyday organization</p>
+          <h1>Create itineraries, custom planners, and a calmer life in minutes.</h1>
+          <p class="hero-text">
+            OrbitNest gives guests a few instant itinerary generations, then unlocks server-saved plans, public sharing,
+            premium templates, hotel and flight recommendations, and life dashboards for signed-in members.
+          </p>
+          <div class="hero-actions">
+            <a class="primary-button" href="#workspace">Generate my first plan</a>
+            <a class="secondary-button" href="#revenue">See revenue model</a>
+          </div>
+          <div class="trust-row" aria-label="Product highlights">
+            <span>✓ SEO-ready landing pages</span>
+            <span>✓ Full-stack accounts</span>
+            <span>✓ Affiliate-ready</span>
+          </div>
+        </div>
+        <div class="hero-card" aria-label="Sample itinerary preview">
+          <div class="card-header">
+            <span class="status-dot"></span>
+            <span>Live planner preview</span>
+          </div>
+          <div class="mini-map">
+            <span>Paris</span>
+            <span>→</span>
+            <span>Lyon</span>
+            <span>→</span>
+            <span>Nice</span>
+          </div>
+          <ul class="timeline">
+            <li><strong>Day 1:</strong> Arrive, boutique hotel check-in, sunset food tour.</li>
+            <li><strong>Day 2:</strong> Museum route, café stops, affiliate hotel upgrades.</li>
+            <li><strong>Day 3:</strong> Train to Lyon, shared public itinerary link.</li>
+          </ul>
+          <div class="affiliate-strip">
+            <a href="https://www.booking.com/" target="_blank" rel="sponsored noopener">Hotel deals</a>
+            <a href="https://www.skyscanner.com/" target="_blank" rel="sponsored noopener">Flight deals</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="feature-grid section-shell" aria-label="Core product features">
+        <article id="travel" class="feature-card">
+          <span class="icon">🧭</span>
+          <h2>Travel itineraries</h2>
+          <p>Generate multi-day trip plans with budgets, pace, interests, daily routes, and sponsored booking links.</p>
+        </article>
+        <article id="planners" class="feature-card">
+          <span class="icon">🗂️</span>
+          <h2>Custom planners</h2>
+          <p>Build weekly, project, study, meal, event, and goal planners from clear templates with no confusion.</p>
+        </article>
+        <article id="life" class="feature-card">
+          <span class="icon">🌿</span>
+          <h2>Life organization hub</h2>
+          <p>Organize routines, tasks, priorities, notes, wellness goals, and saved plans in one gentle dashboard.</p>
+        </article>
+      </section>
+
+      <section class="workspace section-shell" id="workspace">
+        <div class="section-heading">
+          <p class="eyebrow">Full-stack workspace</p>
+          <h2>Start free. Log in to save.</h2>
+          <p>
+            Guests can generate a limited number of itineraries. Signing in with email/password stores
+            plans on the Node server and unlocks saved dashboards.
+          </p>
+        </div>
+
+        <div class="app-grid">
+          <form class="planner-panel" id="itinerary-form">
+            <div class="panel-title">
+              <h3>Trip itinerary generator</h3>
+              <span id="guest-counter" class="pill">Guest generations: 0/3</span>
+            </div>
+            <label>
+              Destination
+              <input name="destination" type="text" placeholder="e.g., Tokyo, Bali, Italy" required />
+            </label>
+            <div class="two-column">
+              <label>
+                Days
+                <input name="days" type="number" min="1" max="21" value="5" required />
+              </label>
+              <label>
+                Budget
+                <select name="budget">
+                  <option>Smart value</option>
+                  <option>Comfort</option>
+                  <option>Luxury</option>
+                </select>
+              </label>
+            </div>
+            <label>
+              Interests
+              <input name="interests" type="text" placeholder="food, beaches, museums, hiking" required />
+            </label>
+            <button class="primary-button full" type="submit">Generate itinerary</button>
+            <p class="helper-text">Premium members can export PDFs, sync calendars, and compare live booking prices.</p>
+          </form>
+
+          <section class="output-panel" aria-live="polite">
+            <div class="panel-title">
+              <h3>Your generated plan</h3>
+              <button class="ghost-button" type="button" id="save-plan">Save plan</button>
+            </div>
+            <div id="itinerary-output" class="empty-state">
+              Fill out the form to create a day-by-day itinerary with booking suggestions and a shareable summary.
+            </div>
+          </section>
+        </div>
+
+        <div class="planner-tools">
+          <section class="tool-card">
+            <h3>Custom planner builder</h3>
+            <form id="custom-planner-form">
+              <label>
+                Planner type
+                <select name="plannerType">
+                  <option>Weekly reset</option>
+                  <option>Project launch</option>
+                  <option>Study sprint</option>
+                  <option>Meal planning</option>
+                </select>
+              </label>
+              <label>
+                Main goal
+                <input name="goal" type="text" placeholder="e.g., Launch my travel blog" required />
+              </label>
+              <button class="secondary-button full" type="submit">Create planner</button>
+            </form>
+            <div id="planner-output" class="tool-output">Your custom checklist will appear here.</div>
+          </section>
+
+          <section class="tool-card premium-card">
+            <div class="panel-title">
+              <h3>Life organization dashboard</h3>
+              <span class="pill premium">Premium</span>
+            </div>
+            <div class="life-board">
+              <div><strong>Today</strong><span id="today-focus">Pick one priority</span></div>
+              <div><strong>Routines</strong><span>Morning · Weekly reset · Budget check</span></div>
+              <div><strong>Saved</strong><span id="saved-count">0 saved plans</span></div>
+            </div>
+            <button class="primary-button full" type="button" data-open-auth>Unlock saved dashboard</button>
+          </section>
+        </div>
+      </section>
+
+      <section id="revenue" class="revenue section-shell">
+        <div class="section-heading">
+          <p class="eyebrow">Automatic revenue model</p>
+          <h2>Freemium subscriptions + affiliate commissions.</h2>
+        </div>
+        <div class="revenue-grid">
+          <article>
+            <h3>Free acquisition</h3>
+            <p>Guests get three unsaved itinerary generations, SEO blog content, and public shared plans for discovery.</p>
+          </article>
+          <article>
+            <h3>Affiliate earnings</h3>
+            <p>Hotel, flight, tour, insurance, and luggage links are marked sponsored and placed naturally in itineraries.</p>
+          </article>
+          <article>
+            <h3>Premium upgrades</h3>
+            <p>Paid users save unlimited plans, export PDFs, sync calendars, collaborate, and access premium templates.</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="pricing" class="pricing section-shell">
+        <div class="price-card">
+          <p class="eyebrow">Free</p>
+          <h2>$0</h2>
+          <ul>
+            <li>3 guest itinerary generations</li>
+            <li>Basic planner templates</li>
+            <li>Affiliate deal recommendations</li>
+          </ul>
+        </div>
+        <div class="price-card featured">
+          <p class="eyebrow">Premium</p>
+          <h2>$9<span>/mo</span></h2>
+          <ul>
+            <li>Unlimited saved itineraries and planners</li>
+            <li>PDF exports and calendar sync</li>
+            <li>Life dashboard and public sharing controls</li>
+          </ul>
+          <button class="primary-button full" type="button" data-open-auth>Start premium</button>
+        </div>
+      </section>
+
+      <section id="blog" class="blog section-shell">
+        <div class="section-heading">
+          <p class="eyebrow">SEO content engine</p>
+          <h2>Blog topics built for Google discovery.</h2>
+        </div>
+        <div class="blog-grid">
+          <article>
+            <p class="blog-tag">Travel</p>
+            <h3>How to plan a 5-day Tokyo itinerary without overwhelm</h3>
+            <p>Targets high-intent trip planner searches and links into the itinerary generator.</p>
+          </article>
+          <article>
+            <p class="blog-tag">Productivity</p>
+            <h3>The weekly reset checklist for busy travelers</h3>
+            <p>Bridges travel users into recurring planner and life organization features.</p>
+          </article>
+          <article>
+            <p class="blog-tag">Sharing</p>
+            <h3>Public itinerary examples you can copy and customize</h3>
+            <p>Creates indexable shared pages that can rank for destination-specific planning terms.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div>
+        <a class="brand" href="#home"><span class="brand-mark">✦</span><span>OrbitNest</span></a>
+        <p>Plan the trip, the week, and the life around it.</p>
+      </div>
+      <div class="footer-links">
+        <a href="robots.txt">Robots</a>
+        <a href="sitemap.xml">Sitemap</a>
+        <a href="#blog">Blog</a>
+        <a href="#pricing">Pricing</a>
+      </div>
+    </footer>
+
+    <dialog class="auth-modal" id="auth-modal" aria-labelledby="auth-title">
+      <form method="dialog" class="modal-card" id="auth-form">
+        <button class="close-button" value="cancel" aria-label="Close login dialog">×</button>
+        <p class="eyebrow">Account access</p>
+        <h2 id="auth-title">Log in or create your free account</h2>
+        <p>Use email/password to save generated itineraries and planners on the server.</p>
+        <label>
+          Email
+          <input name="email" type="email" placeholder="you@example.com" required />
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" minlength="6" placeholder="At least 6 characters" required />
+        </label>
+        <button class="primary-button full" type="submit">Continue</button>
+        <p class="helper-text" id="auth-status">Accounts are stored by the Node server for this full-stack demo.</p>
+      </form>
+    </dialog>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
