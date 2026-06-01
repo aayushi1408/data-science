@@ -591,17 +591,3 @@ select:focus {
     font-size: 3.2rem;
   }
 }
-
-button:disabled {
-  cursor: wait;
-  opacity: 0.72;
-  transform: none;
-}
-
-.shared-page {
-  padding: 72px 0;
-}
-
-.shared-page h1 {
-  max-width: 900px;
-}
